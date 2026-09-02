@@ -882,36 +882,76 @@
 
         // ==================== AUDIO SYSTEM ====================
         const AUDIO_BASE_PATH = 'audio';
+        const PAUSE_BETWEEN_WORDS = 200; // Small gap between words for natural rhythm
 
-        function playAudio(filename) {
-            return new Promise((resolve, reject) => {
+        // Audio queue ensures files play sequentially without interruption
+        /**
+         * Plays a sequence of audio files in order, waiting for each to
+         * finish before starting the next. This prevents the interruption
+         * that occurred when scheduling audio with setTimeout.
+         * @param {string[]} filenames - Array of audio filenames (without .mp3)
+         * @returns {Promise<void>} Resolves when the whole sequence finishes
+         */
+        async function playSequence(filenames) {
+            // Stop any currently playing audio before starting new sequence
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio = null;
+            }
+            
+            for (const filename of filenames) {
                 if (currentAudio) {
                     currentAudio.pause();
                     currentAudio.currentTime = 0;
+                    currentAudio = null;
                 }
-
+                
                 const audio = new Audio(`${AUDIO_BASE_PATH}/${currentLang}/${filename}.mp3`);
                 currentAudio = audio;
                 
-                audio.onended = () => {
-                    currentAudio = null;
-                    resolve();
-                };
-                
-                audio.onerror = (e) => {
-                    console.warn(`Could not play audio: ${currentLang}/${filename}`, e);
-                    currentAudio = null;
-                    resolve();
-                };
-                
-                audio.play().catch((e) => {
-                    console.warn(`Audio play failed: ${currentLang}/${filename}`, e);
-                    currentAudio = null;
-                    resolve();
+                // Wait for this file to finish (or fail) before next
+                await new Promise((resolve) => {
+                    audio.onended = () => resolve();
+                    audio.onerror = () => resolve();
+                    audio.play().catch(() => resolve());
                 });
-            });
+                
+                currentAudio = null;
+                
+                // Natural pause between words
+                await new Promise(r => setTimeout(r, PAUSE_BETWEEN_WORDS));
+            }
         }
 
+        /**
+         * Plays a single audio file
+         * @param {string} filename - Audio filename (without .mp3)
+         * @returns {Promise<void>}
+         */
+        async function playAudio(filename) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio = null;
+            }
+            
+            const audio = new Audio(`${AUDIO_BASE_PATH}/${currentLang}/${filename}.mp3`);
+            currentAudio = audio;
+            
+            await new Promise((resolve) => {
+                audio.onended = () => resolve();
+                audio.onerror = () => resolve();
+                audio.play().catch(() => resolve());
+            });
+            
+            currentAudio = null;
+        }
+
+        /**
+         * Speaks a number's audio file
+         * @param {number} number - Number 1-10
+         */
         async function speakNumber(number) {
             const filename = languages[currentLang].numbers[number];
             if (filename) {
@@ -919,40 +959,33 @@
             }
         }
 
-        async function speakWord(text) {
+        /**
+         * Speaks the full equation in sequence (num1 [op] num2 [equals] answer)
+         * @param {number} num1 - First number
+         * @param {number} num2 - Second number
+         * @param {string} op - Operator audio filename
+         * @param {number} answer - Answer (optional; if empty just says first two)
+         */
+        async function speakEquation(num1, op, num2, answer) {
             const lang = languages[currentLang];
+            const sequence = [
+                lang.numbers[num1],
+                op,
+                lang.numbers[num2]
+            ];
             
-            // Check for encouragement phrases
-            for (const phrase of lang.encouragement) {
-                if (text.includes(phrase.replace(/-/g, ' '))) {
-                    await playAudio(phrase);
-                    return;
-                }
+            if (answer !== undefined && answer !== null) {
+                sequence.push(lang.equals);
+                sequence.push(lang.numbers[answer]);
             }
             
-            // Check for number words
-            for (const [num, word] of Object.entries(lang.numbers)) {
-                if (text === word) {
-                    await playAudio(word);
-                    return;
-                }
-            }
-            
-            // For unrecognized phrases, try direct filename
-            const filename = text.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
-            await playAudio(filename);
+            await playSequence(sequence);
         }
 
-        async function speakEquation(num1, num2, operation) {
-            const lang = languages[currentLang];
-            const filename = `${lang.numbers[num1]}-${lang.plus}-${lang.numbers[num2]}`;
-            await playAudio(filename);
-        }
-
-        function playRandomEncouragement() {
+        async function playRandomEncouragement() {
             const lang = languages[currentLang];
             const random = lang.encouragement[Math.floor(Math.random() * lang.encouragement.length)];
-            playAudio(random);
+            await playAudio(random);
         }
 
         // ==================== LANGUAGE SWITCHING ====================
@@ -1153,13 +1186,8 @@
 
             generateAnswerButtons('add-buttons', addAnswer, handleAdditionAnswer);
 
-            // Speak the problem
-            const lang = languages[currentLang];
-            const word1 = lang.numbers[addNum1];
-            const word2 = lang.numbers[addNum2];
-            playAudio(`${word1}`);
-            setTimeout(() => playAudio(`${lang.plus}`), 800);
-            setTimeout(() => playAudio(`${word2}`), 1600);
+            // Speak the problem smoothly: "num1 [plus] num2"
+            speakEquation(addNum1, languages[currentLang].plus, addNum2);
         }
 
         async function handleAdditionAnswer(selected, button) {
@@ -1174,24 +1202,16 @@
                 updateProgress();
                 
                 const lang = languages[currentLang];
-                const word1 = lang.numbers[addNum1];
-                const word2 = lang.numbers[addNum2];
-                const wordAnswer = lang.numbers[addAnswer];
                 
-                // Play equation
-                playAudio(`${word1}`);
-                setTimeout(() => playAudio(`${lang.plus}`), 600);
-                setTimeout(() => playAudio(`${word2}`), 1200);
-                setTimeout(() => playAudio(`${lang.equals}`), 1800);
-                setTimeout(() => playAudio(`${wordAnswer}`), 2400);
+                // Speak full equation: "num1 [plus] num2 [equals] answer"
+                await speakEquation(addNum1, lang.plus, addNum2, addAnswer);
                 
-                setTimeout(() => {
-                    playRandomEncouragement();
-                    showMessage(lang.messages.correct);
-                }, 3000);
+                // Then praise
+                await playRandomEncouragement();
+                showMessage(lang.messages.correct);
                 
                 createCelebration();
-                setTimeout(newAdditionProblem, 3500);
+                setTimeout(newAdditionProblem, 3000);
             } else {
                 button.classList.add('wrong');
                 setTimeout(() => button.classList.remove('wrong'), 500);
@@ -1244,12 +1264,8 @@
 
             generateAnswerButtons('sub-buttons', subAnswer, handleSubtractionAnswer);
 
-            const lang = languages[currentLang];
-            const word1 = lang.numbers[subNum1];
-            const word2 = lang.numbers[subNum2];
-            playAudio(`${word1}`);
-            setTimeout(() => playAudio(`${lang.minus}`), 800);
-            setTimeout(() => playAudio(`${word2}`), 1600);
+            // Speak the problem smoothly: "num1 [minus] num2"
+            speakEquation(subNum1, languages[currentLang].minus, subNum2);
         }
 
         async function handleSubtractionAnswer(selected, button) {
@@ -1272,23 +1288,16 @@
                 updateProgress();
                 
                 const lang = languages[currentLang];
-                const word1 = lang.numbers[subNum1];
-                const word2 = lang.numbers[subNum2];
-                const wordAnswer = lang.numbers[subAnswer];
                 
-                playAudio(`${word1}`);
-                setTimeout(() => playAudio(`${lang.minus}`), 600);
-                setTimeout(() => playAudio(`${word2}`), 1200);
-                setTimeout(() => playAudio(`${lang.equals}`), 1800);
-                setTimeout(() => playAudio(`${wordAnswer}`), 2400);
+                // Speak full equation: "num1 [minus] num2 [equals] answer"
+                await speakEquation(subNum1, lang.minus, subNum2, subAnswer);
                 
-                setTimeout(() => {
-                    playRandomEncouragement();
-                    showMessage(lang.messages.excellent);
-                }, 3000);
+                // Then praise
+                await playRandomEncouragement();
+                showMessage(lang.messages.excellent);
                 
                 createCelebration();
-                setTimeout(newSubtractionProblem, 3500);
+                setTimeout(newSubtractionProblem, 3000);
             } else {
                 button.classList.add('wrong');
                 setTimeout(() => button.classList.remove('wrong'), 500);
