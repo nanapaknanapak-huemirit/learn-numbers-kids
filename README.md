@@ -2,6 +2,16 @@
 
 An educational web app for children to learn numbers 1-10, addition, and subtraction with audio and animations.
 
+<div align="center">
+
+![QR Code](qrcode.svg)
+
+**📱 Scan to try it on your phone!**
+
+[🔗 Live Demo](https://nanapaknanapak-huemirit.github.io/learn-numbers-kids/)
+
+</div>
+
 ## Features
 
 - 🎯 **Learn Numbers 1-10** - Click on numbers to hear them spoken aloud
@@ -11,10 +21,6 @@ An educational web app for children to learn numbers 1-10, addition, and subtrac
 - 🔊 **Natural Audio** - Uses Edge TTS for clear, child-friendly voices
 - ⭐ **Star Rewards** - Collect stars for correct answers
 - 🎨 **Colorful Animations** - Engaging visual feedback
-
-## Live Demo
-
-🔗 **[Click here to try it!](https://nanapaknanapak-huemirit.github.io/learn-numbers-kids/)**
 
 ## How to Use
 
@@ -52,6 +58,7 @@ An educational web app for children to learn numbers 1-10, addition, and subtrac
 learn-numbers-kids/
 ├── index.html          # Main app file
 ├── README.md           # This file
+├── qrcode.svg          # QR code for easy mobile access
 ├── audio/              # Audio files folder
 │   ├── en/             # English audio
 │   ├── es/             # Spanish audio
