@@ -882,13 +882,11 @@
 
         // ==================== AUDIO SYSTEM ====================
         const AUDIO_BASE_PATH = 'audio';
-        const PAUSE_BETWEEN_WORDS = 200; // Small gap between words for natural rhythm
 
-        // Audio queue ensures files play sequentially without interruption
         /**
-         * Plays a sequence of audio files in order, waiting for each to
-         * finish before starting the next. This prevents the interruption
-         * that occurred when scheduling audio with setTimeout.
+         * Plays a sequence of audio files one after another. All clips are
+         * preloaded up front so there is no network-fetch gap between words,
+         * and words play back-to-back for a smooth, connected flow.
          * @param {string[]} filenames - Array of audio filenames (without .mp3)
          * @returns {Promise<void>} Resolves when the whole sequence finishes
          */
@@ -899,28 +897,28 @@
                 currentAudio.currentTime = 0;
                 currentAudio = null;
             }
-            
-            for (const filename of filenames) {
+
+            // Preload every clip so playback is gap-free between words
+            const clips = filenames.map((filename) => {
+                return new Audio(`${AUDIO_BASE_PATH}/${currentLang}/${filename}.mp3`);
+            });
+
+            for (const audio of clips) {
                 if (currentAudio) {
                     currentAudio.pause();
                     currentAudio.currentTime = 0;
-                    currentAudio = null;
                 }
-                
-                const audio = new Audio(`${AUDIO_BASE_PATH}/${currentLang}/${filename}.mp3`);
+
                 currentAudio = audio;
-                
-                // Wait for this file to finish (or fail) before next
+
+                // Wait for this file to finish (or fail) before the next
                 await new Promise((resolve) => {
                     audio.onended = () => resolve();
                     audio.onerror = () => resolve();
                     audio.play().catch(() => resolve());
                 });
-                
+
                 currentAudio = null;
-                
-                // Natural pause between words
-                await new Promise(r => setTimeout(r, PAUSE_BETWEEN_WORDS));
             }
         }
 
