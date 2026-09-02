@@ -1,0 +1,50 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Node modules (if any)
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Audio generation scripts (not needed for deployment)
+generate-audio.py
+create-audio.py
+audio-generator.py

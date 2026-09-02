@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn Numbers & Math!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            animation: bounceIn 1s ease-out;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #764ba2;
+            border-color: white;
+            font-weight: bold;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Numbers Grid */
+        .numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .number-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .number-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .number-card:active {
+            transform: scale(0.95);
+        }
+
+        .number-card .number {
+            font-size: 4rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: pulse 2s infinite;
+        }
+
+        .number-card .word {
+            font-size: 1.2rem;
+            color: #666;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        .number-card .stars {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .number-card.clicked {
+            animation: cardPop 0.5s ease;
+        }
+
+        .number-card:nth-child(1) { background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%); }
+        .number-card:nth-child(2) { background: linear-gradient(135deg, #fff9f0 0%, #ffe8cc 100%); }
+        .number-card:nth-child(3) { background: linear-gradient(135deg, #fffff0 0%, #ffffcc 100%); }
+        .number-card:nth-child(4) { background: linear-gradient(135deg, #f0fff0 0%, #ccffcc 100%); }
+        .number-card:nth-child(5) { background: linear-gradient(135deg, #f0ffff 0%, #ccffff 100%); }
+        .number-card:nth-child(6) { background: linear-gradient(135deg, #f0f0ff 0%, #e0e0ff 100%); }
+        .number-card:nth-child(7) { background: linear-gradient(135deg, #fff0ff 0%, #ffe0ff 100%); }
+        .number-card:nth-child(8) { background: linear-gradient(135deg, #ffe0f0 0%, #ffc0e0 100%); }
+        .number-card:nth-child(9) { background: linear-gradient(135deg, #f0ffe0 0%, #e0ffc0 100%); }
+        .number-card:nth-child(10) { background: linear-gradient(135deg, #ffe0e0 0%, #ffc0c0 100%); }
+
+        /* Math Game Area */
+        .game-area {
+            background: rgba(255,255,255,0.95);
+            border-radius: 30px;
+            padding: 40px;
+            margin: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .game-title {
+            text-align: center;
+            font-size: 2rem;
+            color: #764ba2;
+            margin-bottom: 30px;
+        }
+
+        .equation-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .fruit-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            min-height: 80px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            min-width: 120px;
+        }
+
+        .fruit {
+            font-size: 2.5rem;
+            animation: bounceIn 0.5s ease;
+        }
+
+        .fruit.removing {
+            animation: flyAway 0.8s ease forwards;
+        }
+
+        .fruit.adding {
+            animation: slideIn 0.5s ease;
+        }
+
+        .operator {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #f5576c;
+        }
+
+        .equals {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .answer-box {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #764ba2;
+            background: linear-gradient(135deg, #fff, #f0f0f0);
+            border: 3px dashed #764ba2;
+            border-radius: 15px;
+            padding: 15px 30px;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .count-label {
+            font-size: 1.5rem;
+            color: #666;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* Answer Buttons */
+        .answer-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .answer-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            width: 80px;
+            height: 80px;
+            font-size: 2rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(118, 75, 162, 0.4);
+        }
+
+        .answer-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(118, 75, 162, 0.5);
+        }
+
+        .answer-btn:active {
+            transform: scale(0.95);
+        }
+
+        .answer-btn.correct {
+            background: linear-gradient(135deg, #2ed573, #17c964);
+            animation: correctPulse 0.5s ease;
+        }
+
+        .answer-btn.wrong {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            animation: shake 0.5s ease;
+        }
+
+        /* Score and Progress */
+        .score-display {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .score-display span {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 30px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #00f2fe, #4facfe, #f093fb, #f5576c);
+            background-size: 300% 100%;
+            animation: shimmer 2s linear infinite;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        /* Message */
+        .message {
+            text-align: center;
+            font-size: 2rem;
+            color: white;
+            margin: 20px 0;
+            min-height: 50px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Buttons */
+        .controls {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(245, 87, 108, 0.4);
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.5);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn.secondary {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn.success {
+            background: linear-gradient(45deg, #2ed573, #17c964);
+            box-shadow: 0 5px 20px rgba(46, 213, 115, 0.4);
+        }
+
+        /* Fun Facts */
+        .fun-facts {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .fun-facts h2 {
+            color: #764ba2;
+            margin-bottom: 20px;
+        }
+
+        .fun-facts p {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .particle {
+            position: absolute;
+            font-size: 2rem;
+            animation: fall 3s linear forwards;
+        }
+
+        /* Animations */
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.1); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes cardPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px) rotate(-5deg); }
+            75% { transform: translateX(10px) rotate(5deg); }
+        }
+
+        @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        @keyframes flyAway {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(180deg); opacity: 0; }
+        }
+
+        @keyframes slideIn {
+            0% { transform: translateX(-50px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease;
+        }
+
+        .rainbow {
+            animation: rainbow 2s linear infinite;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .game-area { padding: 20px; margin: 10px; }
+            .fruit { font-size: 2rem; }
+            .answer-btn { width: 60px; height: 60px; font-size: 1.5rem; }
+            .operator, .equals { font-size: 2rem; }
+            .answer-box { font-size: 2rem; padding: 10px 20px; }
+        }
+
+        /* Language Selector */
+        .language-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .lang-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            font-size: 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .lang-btn.active {
+            background: white;
+            color: #764ba2;
+            border-color: white;
+            font-weight: bold;
+        }
+
+        .lang-btn .flag {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <h1>Number Adventure!</h1>
+        <p class="subtitle">Learn numbers, addition and subtraction with fun!</p>
+        
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('numbers')">Numbers</button>
+            <button class="nav-tab" onclick="switchTab('addition')">Addition</button>
+            <button class="nav-tab" onclick="switchTab('subtraction')">Subtraction</button>
+        </div>
+
+        <!-- Language Selector -->
+        <div class="language-selector">
+            <button class="lang-btn active" onclick="switchLanguage('en')"><span class="flag">🇺🇸</span>English</button>
+            <button class="lang-btn" onclick="switchLanguage('es')"><span class="flag">🇪🇸</span>Español</button>
+            <button class="lang-btn" onclick="switchLanguage('de')"><span class="flag">🇩🇪</span>Deutsch</button>
+            <button class="lang-btn" onclick="switchLanguage('fr')"><span class="flag">🇫🇷</span>Français</button>
+            <button class="lang-btn" onclick="switchLanguage('nl')"><span class="flag">🇳🇱</span>Nederlands</button>
+            <button class="lang-btn" onclick="switchLanguage('pt')"><span class="flag">🇧🇷</span>Português</button>
+            <button class="lang-btn" onclick="switchLanguage('it')"><span class="flag">🇮🇹</span>Italiano</button>
+            <button class="lang-btn" onclick="switchLanguage('ja')"><span class="flag">🇯🇵</span>日本語</button>
+            <button class="lang-btn" onclick="switchLanguage('zh')"><span class="flag">🇨🇳</span>中文</button>
+        </div>
+
+        <!-- Score Display -->
+        <div class="score-display">
+            <span>Score: <span id="score">0</span> Stars</span>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress" id="progress" style="width: 0%"></div>
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <!-- Numbers Tab -->
+        <div class="tab-content active" id="numbers-tab">
+            <div class="numbers-grid" id="numbersGrid">
+                <div class="number-card" data-number="1">
+                    <div class="number">1</div>
+                    <div class="word">One</div>
+                    <div class="stars" id="stars-1"></div>
+                </div>
+                <div class="number-card" data-number="2">
+                    <div class="number">2</div>
+                    <div class="word">Two</div>
+                    <div class="stars" id="stars-2"></div>
+                </div>
+                <div class="number-card" data-number="3">
+                    <div class="number">3</div>
+                    <div class="word">Three</div>
+                    <div class="stars" id="stars-3"></div>
+                </div>
+                <div class="number-card" data-number="4">
+                    <div class="number">4</div>
+                    <div class="word">Four</div>
+                    <div class="stars" id="stars-4"></div>
+                </div>
+                <div class="number-card" data-number="5">
+                    <div class="number">5</div>
+                    <div class="word">Five</div>
+                    <div class="stars" id="stars-5"></div>
+                </div>
+                <div class="number-card" data-number="6">
+                    <div class="number">6</div>
+                    <div class="word">Six</div>
+                    <div class="stars" id="stars-6"></div>
+                </div>
+                <div class="number-card" data-number="7">
+                    <div class="number">7</div>
+                    <div class="word">Seven</div>
+                    <div class="stars" id="stars-7"></div>
+                </div>
+                <div class="number-card" data-number="8">
+                    <div class="number">8</div>
+                    <div class="word">Eight</div>
+                    <div class="stars" id="stars-8"></div>
+                </div>
+                <div class="number-card" data-number="9">
+                    <div class="number">9</div>
+                    <div class="word">Nine</div>
+                    <div class="stars" id="stars-9"></div>
+                </div>
+                <div class="number-card" data-number="10">
+                    <div class="number">10</div>
+                    <div class="word">Ten</div>
+                    <div class="stars" id="stars-10"></div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn" onclick="playAllNumbers()">Play All Numbers</button>
+                <button class="btn secondary" onclick="resetNumbers()">Reset Progress</button>
+            </div>
+
+            <div class="fun-facts">
+                <h2>Did You Know?</h2>
+                <p id="funFact">Click on any number to learn more!</p>
+            </div>
+        </div>
+
+        <!-- Addition Tab -->
+        <div class="tab-content" id="addition-tab">
+            <div class="game-area">
+                <h2 class="game-title">Addition - Let's Add!</h2>
+                
+                <div class="equation-display">
+                    <div>
+                        <div class="fruit-group" id="add-group1"></div>
+                        <div class="count-label" id="add-count1">0</div>
+                    </div>
+                    <div class="operator">+</div>
+                    <div>
+                        <div class="fruit-group" id="add-group2"></div>
+                        <div class="count-label" id="add-count2">0</div>
+                    </div>
+                    <div class="equals">=</div>
+                    <div class="answer-box" id="add-answer">?</div>
+                </div>
+
+                <div class="answer-buttons" id="add-buttons"></div>
+
+                <div class="controls">
+                    <button class="btn success" onclick="newAdditionProblem()">New Problem</button>
+                    <button class="btn secondary" onclick="resetAddition()">Reset Progress</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subtraction Tab -->
+        <div class="tab-content" id="subtraction-tab">
+            <div class="game-area">
+                <h2 class="game-title">Subtraction - Take Away!</h2>
+                
+                <div class="equation-display">
+                    <div>
+                        <div class="fruit-group" id="sub-group1"></div>
+                        <div class="count-label" id="sub-count1">0</div>
+                    </div>
+                    <div class="operator">-</div>
+                    <div>
+                        <div class="fruit-group" id="sub-group2"></div>
+                        <div class="count-label" id="sub-count2">0</div>
+                    </div>
+                    <div class="equals">=</div>
+                    <div class="answer-box" id="sub-answer">?</div>
+                </div>
+
+                <div class="answer-buttons" id="sub-buttons"></div>
+
+                <div class="controls">
+                    <button class="btn success" onclick="newSubtractionProblem()">New Problem</button>
+                    <button class="btn secondary" onclick="resetSubtraction()">Reset Progress</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== GLOBAL STATE ====================
+        let totalScore = 0;
+        let currentTab = 'numbers';
+        let currentAudio = null;
+        let currentLang = 'en';
+
+        // ==================== LANGUAGE CONFIGURATION ====================
+        const languages = {
+            en: {
+                name: 'English',
+                numbers: { 1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten' },
+                plus: 'plus',
+                minus: 'minus',
+                equals: 'equals',
+                encouragement: ['great-job', 'excellent', 'well-done', 'amazing', 'perfect', 'you-got-it', 'wonderful', 'fantastic'],
+                messages: {
+                    numbers: 'Click on a number to hear it!',
+                    addition: 'Addition - Let\'s Add!',
+                    subtraction: 'Subtraction - Take Away!',
+                    newProblem: 'New Problem',
+                    resetProgress: 'Reset Progress',
+                    tryAgain: 'Try again!',
+                    correct: 'Great job! That\'s correct!',
+                    excellent: 'Excellent! You got it!',
+                    resetNumbers: 'Numbers progress reset!',
+                    resetAddition: 'Addition progress reset!',
+                    resetSubtraction: 'Subtraction progress reset!',
+                    congrats: 'Congratulations! You learned all numbers!'
+                }
+            },
+            es: {
+                name: 'Español',
+                numbers: { 1: 'uno', 2: 'dos', 3: 'tres', 4: 'cuatro', 5: 'cinco', 6: 'seis', 7: 'siete', 8: 'ocho', 9: 'nueve', 10: 'diez' },
+                plus: 'más',
+                minus: 'menos',
+                equals: 'igual',
+                encouragement: ['muy-bien', 'excelente', 'buen-trabajo', 'genial', 'perfecto', 'eres-genial', 'fantastico', 'bravo'],
+                messages: {
+                    numbers: '¡Haz clic en un número para escucharlo!',
+                    addition: '¡Suma - Vamos a Sumar!',
+                    subtraction: '¡Resta - Vamos a Restar!',
+                    newProblem: 'Nuevo Problema',
+                    resetProgress: 'Reiniciar Progreso',
+                    tryAgain: '¡Intenta de nuevo!',
+                    correct: '¡Muy bien! ¡Correcto!',
+                    excellent: '¡Excelente! ¡Lo lograste!',
+                    resetNumbers: '¡Progreso de números reiniciado!',
+                    resetAddition: '¡Progreso de suma reiniciado!',
+                    resetSubtraction: '¡Progreso de resta reiniciado!',
+                    congrats: '¡Felicitaciones! ¡Aprendiste todos los números!'
+                }
+            },
+            de: {
+                name: 'Deutsch',
+                numbers: { 1: 'eins', 2: 'zwei', 3: 'drei', 4: 'vier', 5: 'fünf', 6: 'sechs', 7: 'sieben', 8: 'acht', 9: 'neun', 10: 'zehn' },
+                plus: 'plus',
+                minus: 'minus',
+                equals: 'gleich',
+                encouragement: ['sehr-gut', 'ausgezeichnet', 'gut-gemacht', 'toll', 'perfekt', 'du-bist-grossartig', 'fantastisch', 'bravo'],
+                messages: {
+                    numbers: 'Klicke auf eine Zahl, um sie zu hören!',
+                    addition: 'Addition - Lass uns addieren!',
+                    subtraction: 'Subtraktion - Lass uns subtrahieren!',
+                    newProblem: 'Neues Problem',
+                    resetProgress: 'Fortschritt zurücksetzen',
+                    tryAgain: 'Versuch es nochmal!',
+                    correct: 'Sehr gut! Das ist richtig!',
+                    excellent: 'Ausgezeichnet! Du hast es geschafft!',
+                    resetNumbers: 'Zahlen-Fortschritt zurückgesetzt!',
+                    resetAddition: 'Additions-Fortschritt zurückgesetzt!',
+                    resetSubtraction: 'Subtraktions-Fortschritt zurückgesetzt!',
+                    congrats: 'Herzlichen Glückwunsch! Du hast alle Zahlen gelernt!'
+                }
+            },
+            fr: {
+                name: 'Français',
+                numbers: { 1: 'un', 2: 'deux', 3: 'trois', 4: 'quatre', 5: 'cinq', 6: 'six', 7: 'sept', 8: 'huit', 9: 'neuf', 10: 'dix' },
+                plus: 'plus',
+                minus: 'moins',
+                equals: 'égal',
+                encouragement: ['tres-bien', 'excellent', 'bien-joue', 'super', 'parfait', 'tu-es-genial', 'fantastique', 'bravo'],
+                messages: {
+                    numbers: 'Cliquez sur un nombre pour l\'entendre!',
+                    addition: 'Addition - Additionnons!',
+                    subtraction: 'Soustraction - Soustrayons!',
+                    newProblem: 'Nouveau Problème',
+                    resetProgress: 'Réinitialiser le Progrès',
+                    tryAgain: 'Essaie encore!',
+                    correct: 'Très bien! C\'est correct!',
+                    excellent: 'Excellent! Tu as réussi!',
+                    resetNumbers: 'Progrès des nombres réinitialisé!',
+                    resetAddition: 'Progrès d\'addition réinitialisé!',
+                    resetSubtraction: 'Progrès de soustraction réinitialisé!',
+                    congrats: 'Félicitations! Tu as appris tous les nombres!'
+                }
+            },
+            nl: {
+                name: 'Nederlands',
+                numbers: { 1: 'een', 2: 'twee', 3: 'drie', 4: 'vier', 5: 'vijf', 6: 'zes', 7: 'zeven', 8: 'acht', 9: 'negen', 10: 'tien' },
+                plus: 'plus',
+                minus: 'min',
+                equals: 'gelijk',
+                encouragement: ['heel-goed', 'uitstekend', 'goed-gedaan', 'super', 'perfect', 'je-bent-geweldig', 'fantastisch', 'bravo'],
+                messages: {
+                    numbers: 'Klik op een nummer om het te horen!',
+                    addition: 'Optellen - Laten we optellen!',
+                    subtraction: 'Aftrekken - Laten we aftrekken!',
+                    newProblem: 'Nieuw Probleem',
+                    resetProgress: 'Voortgang Resetten',
+                    tryAgain: 'Probeer het opnieuw!',
+                    correct: 'Heel goed! Dat is goed!',
+                    excellent: 'Uitstekend! Je hebt het goed gedaan!',
+                    resetNumbers: 'Nummers voortgang gereset!',
+                    resetAddition: 'Optellen voortgang gereset!',
+                    resetSubtraction: 'Aftrekken voortgang gereset!',
+                    congrats: 'Gefeliciteerd! Je hebt alle nummers geleerd!'
+                }
+            },
+            pt: {
+                name: 'Português',
+                numbers: { 1: 'um', 2: 'dois', 3: 'três', 4: 'quatro', 5: 'cinco', 6: 'seis', 7: 'sete', 8: 'oito', 9: 'nove', 10: 'dez' },
+                plus: 'mais',
+                minus: 'menos',
+                equals: 'igual',
+                encouragement: ['muito-bem', 'excelente', 'bom-trabalho', 'parabens', 'perfeito', 'voce-e-incrivel', 'fantastico', 'bravo'],
+                messages: {
+                    numbers: 'Clique em um número para ouvir!',
+                    addition: 'Soma - Vamos Somar!',
+                    subtraction: 'Subtração - Vamos Subtrair!',
+                    newProblem: 'Novo Problema',
+                    resetProgress: 'Redefinir Progresso',
+                    tryAgain: 'Tente de novo!',
+                    correct: 'Muito bem! Isso está correto!',
+                    excellent: 'Excelente! Você conseguiu!',
+                    resetNumbers: 'Progresso de números redefinido!',
+                    resetAddition: 'Progresso de soma redefinido!',
+                    resetSubtraction: 'Progresso de subtração redefinido!',
+                    congrats: 'Parabéns! Você aprendeu todos os números!'
+                }
+            },
+            it: {
+                name: 'Italiano',
+                numbers: { 1: 'uno', 2: 'due', 3: 'tre', 4: 'quattro', 5: 'cinque', 6: 'sei', 7: 'sette', 8: 'otto', 9: 'nove', 10: 'dieci' },
+                plus: 'più',
+                minus: 'meno',
+                equals: 'uguale',
+                encouragement: ['molto-bene', 'eccellente', 'ben-fatto', 'super', 'perfetto', 'sei-fantastico', 'fantastico', 'bravo'],
+                messages: {
+                    numbers: 'Clicca su un numero per sentirlo!',
+                    addition: 'Addizione - Sommiamo!',
+                    subtraction: 'Sottrazione - Sottraiamo!',
+                    newProblem: 'Nuovo Problema',
+                    resetProgress: 'Reimposta Progresso',
+                    tryAgain: 'Riprova!',
+                    correct: 'Molto bene! È corretto!',
+                    excellent: 'Eccellente! Ce l\'hai fatta!',
+                    resetNumbers: 'Progresso numeri reimpostato!',
+                    resetAddition: 'Progresso addizione reimpostato!',
+                    resetSubtraction: 'Progresso sottrazione reimpostato!',
+                    congrats: 'Congratulazioni! Hai imparato tutti i numeri!'
+                }
+            },
+            ja: {
+                name: '日本語',
+                numbers: { 1: 'いち', 2: 'に', 3: 'さん', 4: 'よん', 5: 'ご', 6: 'ろく', 7: 'なな', 8: 'はち', 9: 'きゅう', 10: 'じゅう' },
+                plus: 'たす',
+                minus: 'ひく',
+                equals: 'は',
+                encouragement: ['yoku-dekimashita', 'sugoi', 'ganbattane', 'saikou', 'paafekuto', 'anata-wa-sugoi', 'subarashii', 'yoku-yatta'],
+                messages: {
+                    numbers: '数字をクリックして聞いてみよう！',
+                    addition: 'たし算 - たしてみよう！',
+                    subtraction: 'ひき算 - ひいてみよう！',
+                    newProblem: '新しい問題',
+                    resetProgress: 'リセット',
+                    tryAgain: 'もういちど！',
+                    correct: 'よくできました！せいかい！',
+                    excellent: 'すごい！できました！',
+                    resetNumbers: '数字の Progress リセット！',
+                    resetAddition: 'たし算の Progress リセット！',
+                    resetSubtraction: 'ひき算の Progress リセット！',
+                    congrats: 'おめでとう！全部の数字を覚えたね！'
+                }
+            },
+            zh: {
+                name: '中文',
+                numbers: { 1: '一', 2: '二', 3: '三', 4: '四', 5: '五', 6: '六', 7: '七', 8: '八', 9: '九', 10: '十' },
+                plus: '加',
+                minus: '减',
+                equals: '等于',
+                encouragement: ['hen-hao', 'tai-bang-le', 'zuo-de-hao', 'zhen-bang', 'wanmei', 'ni-zhen-lihai', 'tai-lihai-le', 'zhengque'],
+                messages: {
+                    numbers: '点击数字来听发音！',
+                    addition: '加法 - 我们来加！',
+                    subtraction: '减法 - 我们来减！',
+                    newProblem: '新问题',
+                    resetProgress: '重置进度',
+                    tryAgain: '再试一次！',
+                    correct: '很好！正确！',
+                    excellent: '太棒了！你做到了！',
+                    resetNumbers: '数字进度已重置！',
+                    resetAddition: '加法进度已重置！',
+                    resetSubtraction: '减法进度已重置！',
+                    congrats: '恭喜！你学会了所有数字！'
+                }
+            }
+        };
+
+        // ==================== AUDIO SYSTEM ====================
+        const AUDIO_BASE_PATH = 'audio';
+
+        function playAudio(filename) {
+            return new Promise((resolve, reject) => {
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                }
+
+                const audio = new Audio(`${AUDIO_BASE_PATH}/${currentLang}/${filename}.mp3`);
+                currentAudio = audio;
+                
+                audio.onended = () => {
+                    currentAudio = null;
+                    resolve();
+                };
+                
+                audio.onerror = (e) => {
+                    console.warn(`Could not play audio: ${currentLang}/${filename}`, e);
+                    currentAudio = null;
+                    resolve();
+                };
+                
+                audio.play().catch((e) => {
+                    console.warn(`Audio play failed: ${currentLang}/${filename}`, e);
+                    currentAudio = null;
+                    resolve();
+                });
+            });
+        }
+
+        async function speakNumber(number) {
+            const filename = languages[currentLang].numbers[number];
+            if (filename) {
+                await playAudio(filename);
+            }
+        }
+
+        async function speakWord(text) {
+            const lang = languages[currentLang];
+            
+            // Check for encouragement phrases
+            for (const phrase of lang.encouragement) {
+                if (text.includes(phrase.replace(/-/g, ' '))) {
+                    await playAudio(phrase);
+                    return;
+                }
+            }
+            
+            // Check for number words
+            for (const [num, word] of Object.entries(lang.numbers)) {
+                if (text === word) {
+                    await playAudio(word);
+                    return;
+                }
+            }
+            
+            // For unrecognized phrases, try direct filename
+            const filename = text.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+            await playAudio(filename);
+        }
+
+        async function speakEquation(num1, num2, operation) {
+            const lang = languages[currentLang];
+            const filename = `${lang.numbers[num1]}-${lang.plus}-${lang.numbers[num2]}`;
+            await playAudio(filename);
+        }
+
+        function playRandomEncouragement() {
+            const lang = languages[currentLang];
+            const random = lang.encouragement[Math.floor(Math.random() * lang.encouragement.length)];
+            playAudio(random);
+        }
+
+        // ==================== LANGUAGE SWITCHING ====================
+        function switchLanguage(lang) {
+            currentLang = lang;
+            
+            // Update language buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.lang-btn').classList.add('active');
+            
+            // Update UI text
+            updateUIText();
+            
+            // Save preference
+            localStorage.setItem('learnNumbers_lang', lang);
+            
+            // Play a greeting in the new language
+            playRandomEncouragement();
+        }
+
+        function updateUIText() {
+            const lang = languages[currentLang];
+            
+            // Update subtitles and messages
+            document.querySelector('.subtitle').textContent = lang.messages.numbers;
+            
+            // Update game titles
+            const additionTitle = document.querySelector('#addition-tab .game-title');
+            if (additionTitle) additionTitle.textContent = lang.messages.addition;
+            
+            const subtractionTitle = document.querySelector('#subtraction-tab .game-title');
+            if (subtractionTitle) subtractionTitle.textContent = lang.messages.subtraction;
+            
+            // Update buttons
+            const newProblemBtns = document.querySelectorAll('.btn.success');
+            newProblemBtns.forEach(btn => btn.textContent = lang.messages.newProblem);
+            
+            const resetBtns = document.querySelectorAll('.btn.secondary');
+            resetBtns.forEach(btn => btn.textContent = lang.messages.resetProgress);
+        }
+
+        // ==================== NUMBERS MODE ====================
+        let clickedNumbers = new Set();
+        const funFacts = {
+            1: "The number 1 is the first natural number!",
+            2: "Two is the smallest even prime number!",
+            3: "Three is the first odd prime number!",
+            4: "Four has four letters!",
+            5: "Five is the number of fingers on one hand!",
+            6: "Six is the smallest perfect number!",
+            7: "Seven is considered lucky in many cultures!",
+            8: "Eight sounds like 'wealth' in Chinese!",
+            9: "Nine is the highest single-digit number!",
+            10: "Ten is the base of our number system!"
+        };
+
+        const fruits = ['🍎', '🍊', '🍋', '🍇', '🍓', '🫐', '🥝', '🍑', '🍒', '🍌'];
+
+        // ==================== ADDITION STATE ====================
+        let addScore = 0;
+        let addNum1 = 0;
+        let addNum2 = 0;
+        let addAnswer = 0;
+
+        // ==================== SUBTRACTION STATE ====================
+        let subScore = 0;
+        let subNum1 = 0;
+        let subNum2 = 0;
+        let subAnswer = 0;
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load saved language
+            const savedLang = localStorage.getItem('learnNumbers_lang');
+            if (savedLang && languages[savedLang]) {
+                currentLang = savedLang;
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.onclick.toString().includes(`'${savedLang}'`)) {
+                        btn.classList.add('active');
+                    }
+                });
+                updateUIText();
+            }
+            
+            // Numbers cards
+            document.querySelectorAll('.number-card').forEach((card, index) => {
+                card.addEventListener('click', () => handleCardClick(card, index + 1));
+            });
+
+            // Initialize first problems
+            newAdditionProblem();
+            newSubtractionProblem();
+        });
+
+        // ==================== TAB NAVIGATION ====================
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update nav tabs
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(`${tab}-tab`).classList.add('active');
+
+            // Update progress for current tab
+            updateProgress();
+        }
+
+        // ==================== NUMBERS MODE ====================
+        function handleCardClick(card, number) {
+            card.classList.add('clicked');
+            setTimeout(() => card.classList.remove('clicked'), 500);
+
+            speakNumber(number);
+            showFunFact(number);
+            createParticles(card);
+            
+            if (!clickedNumbers.has(number)) {
+                clickedNumbers.add(number);
+                totalScore += 10;
+                updateScore();
+                updateProgress();
+                
+                document.getElementById(`stars-${number}`).innerHTML = '⭐';
+                
+                if (clickedNumbers.size === 10) {
+                    const lang = languages[currentLang];
+                    showMessage(lang.messages.congrats);
+                    createCelebration();
+                }
+            }
+        }
+
+        function showFunFact(number) {
+            document.getElementById('funFact').textContent = funFacts[number];
+        }
+
+        function playAllNumbers() {
+            let delay = 0;
+            for (let i = 1; i <= 10; i++) {
+                setTimeout(() => {
+                    const card = document.querySelector(`[data-number="${i}"]`);
+                    card.classList.add('shake');
+                    setTimeout(() => card.classList.remove('shake'), 500);
+                    speakNumber(i);
+                }, delay);
+                delay += 1200;
+            }
+        }
+
+        function resetNumbers() {
+            clickedNumbers.clear();
+            for (let i = 1; i <= 10; i++) {
+                document.getElementById(`stars-${i}`).innerHTML = '';
+            }
+            const lang = languages[currentLang];
+            showMessage(lang.messages.resetNumbers);
+            document.getElementById('funFact').textContent = 'Click on any number to learn more!';
+            updateProgress();
+        }
+
+        // ==================== ADDITION MODE ====================
+        function newAdditionProblem() {
+            addNum1 = Math.floor(Math.random() * 5) + 1;
+            addNum2 = Math.floor(Math.random() * (10 - addNum1)) + 1;
+            addAnswer = addNum1 + addNum2;
+
+            const fruit1 = fruits[Math.floor(Math.random() * fruits.length)];
+            const fruit2 = fruits[Math.floor(Math.random() * fruits.length)];
+
+            const group1 = document.getElementById('add-group1');
+            group1.innerHTML = '';
+            for (let i = 0; i < addNum1; i++) {
+                const span = document.createElement('span');
+                span.className = 'fruit adding';
+                span.textContent = fruit1;
+                span.style.animationDelay = `${i * 0.1}s`;
+                group1.appendChild(span);
+            }
+            document.getElementById('add-count1').textContent = addNum1;
+
+            const group2 = document.getElementById('add-group2');
+            group2.innerHTML = '';
+            for (let i = 0; i < addNum2; i++) {
+                const span = document.createElement('span');
+                span.className = 'fruit adding';
+                span.textContent = fruit2;
+                span.style.animationDelay = `${i * 0.1}s`;
+                group2.appendChild(span);
+            }
+            document.getElementById('add-count2').textContent = addNum2;
+
+            document.getElementById('add-answer').textContent = '?';
+            document.getElementById('add-answer').style.color = '#764ba2';
+
+            generateAnswerButtons('add-buttons', addAnswer, handleAdditionAnswer);
+
+            // Speak the problem
+            const lang = languages[currentLang];
+            const word1 = lang.numbers[addNum1];
+            const word2 = lang.numbers[addNum2];
+            playAudio(`${word1}`);
+            setTimeout(() => playAudio(`${lang.plus}`), 800);
+            setTimeout(() => playAudio(`${word2}`), 1600);
+        }
+
+        async function handleAdditionAnswer(selected, button) {
+            if (selected === addAnswer) {
+                button.classList.add('correct');
+                document.getElementById('add-answer').textContent = addAnswer;
+                document.getElementById('add-answer').style.color = '#2ed573';
+                
+                addScore += 10;
+                totalScore += 10;
+                updateScore();
+                updateProgress();
+                
+                const lang = languages[currentLang];
+                const word1 = lang.numbers[addNum1];
+                const word2 = lang.numbers[addNum2];
+                const wordAnswer = lang.numbers[addAnswer];
+                
+                // Play equation
+                playAudio(`${word1}`);
+                setTimeout(() => playAudio(`${lang.plus}`), 600);
+                setTimeout(() => playAudio(`${word2}`), 1200);
+                setTimeout(() => playAudio(`${lang.equals}`), 1800);
+                setTimeout(() => playAudio(`${wordAnswer}`), 2400);
+                
+                setTimeout(() => {
+                    playRandomEncouragement();
+                    showMessage(lang.messages.correct);
+                }, 3000);
+                
+                createCelebration();
+                setTimeout(newAdditionProblem, 3500);
+            } else {
+                button.classList.add('wrong');
+                setTimeout(() => button.classList.remove('wrong'), 500);
+                const lang = languages[currentLang];
+                playAudio('try-again');
+            }
+        }
+
+        function resetAddition() {
+            addScore = 0;
+            const lang = languages[currentLang];
+            showMessage(lang.messages.resetAddition);
+            newAdditionProblem();
+            updateProgress();
+        }
+
+        // ==================== SUBTRACTION MODE ====================
+        function newSubtractionProblem() {
+            subNum1 = Math.floor(Math.random() * 9) + 2;
+            subNum2 = Math.floor(Math.random() * (subNum1 - 1)) + 1;
+            subAnswer = subNum1 - subNum2;
+
+            const fruit = fruits[Math.floor(Math.random() * fruits.length)];
+
+            const group1 = document.getElementById('sub-group1');
+            group1.innerHTML = '';
+            for (let i = 0; i < subNum1; i++) {
+                const span = document.createElement('span');
+                span.className = 'fruit adding';
+                span.textContent = fruit;
+                span.style.animationDelay = `${i * 0.1}s`;
+                group1.appendChild(span);
+            }
+            document.getElementById('sub-count1').textContent = subNum1;
+
+            const group2 = document.getElementById('sub-group2');
+            group2.innerHTML = '';
+            for (let i = 0; i < subNum2; i++) {
+                const span = document.createElement('span');
+                span.className = 'fruit adding';
+                span.textContent = fruit;
+                span.style.opacity = '0.5';
+                span.style.animationDelay = `${i * 0.1}s`;
+                group2.appendChild(span);
+            }
+            document.getElementById('sub-count2').textContent = subNum2;
+
+            document.getElementById('sub-answer').textContent = '?';
+            document.getElementById('sub-answer').style.color = '#764ba2';
+
+            generateAnswerButtons('sub-buttons', subAnswer, handleSubtractionAnswer);
+
+            const lang = languages[currentLang];
+            const word1 = lang.numbers[subNum1];
+            const word2 = lang.numbers[subNum2];
+            playAudio(`${word1}`);
+            setTimeout(() => playAudio(`${lang.minus}`), 800);
+            setTimeout(() => playAudio(`${word2}`), 1600);
+        }
+
+        async function handleSubtractionAnswer(selected, button) {
+            if (selected === subAnswer) {
+                button.classList.add('correct');
+                document.getElementById('sub-answer').textContent = subAnswer;
+                document.getElementById('sub-answer').style.color = '#2ed573';
+                
+                const group1 = document.getElementById('sub-group1');
+                const fruitsToRemove = group1.querySelectorAll('.fruit');
+                for (let i = subNum1 - 1; i >= subNum1 - subNum2; i--) {
+                    if (fruitsToRemove[i]) {
+                        fruitsToRemove[i].classList.add('removing');
+                    }
+                }
+                
+                subScore += 10;
+                totalScore += 10;
+                updateScore();
+                updateProgress();
+                
+                const lang = languages[currentLang];
+                const word1 = lang.numbers[subNum1];
+                const word2 = lang.numbers[subNum2];
+                const wordAnswer = lang.numbers[subAnswer];
+                
+                playAudio(`${word1}`);
+                setTimeout(() => playAudio(`${lang.minus}`), 600);
+                setTimeout(() => playAudio(`${word2}`), 1200);
+                setTimeout(() => playAudio(`${lang.equals}`), 1800);
+                setTimeout(() => playAudio(`${wordAnswer}`), 2400);
+                
+                setTimeout(() => {
+                    playRandomEncouragement();
+                    showMessage(lang.messages.excellent);
+                }, 3000);
+                
+                createCelebration();
+                setTimeout(newSubtractionProblem, 3500);
+            } else {
+                button.classList.add('wrong');
+                setTimeout(() => button.classList.remove('wrong'), 500);
+                const lang = languages[currentLang];
+                playAudio('try-again');
+            }
+        }
+
+        function resetSubtraction() {
+            subScore = 0;
+            const lang = languages[currentLang];
+            showMessage(lang.messages.resetSubtraction);
+            newSubtractionProblem();
+            updateProgress();
+        }
+
+        // ==================== ANSWER BUTTONS GENERATOR ====================
+        function generateAnswerButtons(containerId, correctAnswer, callback) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            let options = [correctAnswer];
+            while (options.length < 3) {
+                let wrong = correctAnswer + Math.floor(Math.random() * 5) - 2;
+                if (wrong >= 0 && wrong <= 10 && !options.includes(wrong)) {
+                    options.push(wrong);
+                }
+            }
+
+            options.sort(() => Math.random() - 0.5);
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = opt;
+                btn.onclick = () => callback(opt, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function createParticles(element) {
+            const rect = element.getBoundingClientRect();
+            const emojis = ['⭐', '✨', '🌟', '💫', '🎈', '🎉', '🎊'];
+            
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                particle.style.left = rect.left + Math.random() * rect.width + 'px';
+                particle.style.top = rect.top + 'px';
+                particle.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                document.getElementById('particles').appendChild(particle);
+                setTimeout(() => particle.remove(), 3000);
+            }
+        }
+
+        function createCelebration() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.textContent = ['🎉', '🎊', '🥳', '🎈', '⭐'][Math.floor(Math.random() * 5)];
+                    particle.style.left = Math.random() * window.innerWidth + 'px';
+                    particle.style.top = -50 + 'px';
+                    container.appendChild(particle);
+                    setTimeout(() => particle.remove(), 3000);
+                }, i * 80);
+            }
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = totalScore;
+        }
+
+        function updateProgress() {
+            let progress = 0;
+            if (currentTab === 'numbers') {
+                progress = (clickedNumbers.size / 10) * 100;
+            } else if (currentTab === 'addition') {
+                progress = Math.min((addScore / 50) * 100, 100);
+            } else if (currentTab === 'subtraction') {
+                progress = Math.min((subScore / 50) * 100, 100);
+            }
+            document.getElementById('progress').style.width = progress + '%';
+        }
+
+        function showMessage(text) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.classList.add('rainbow');
+            setTimeout(() => messageEl.classList.remove('rainbow'), 3000);
+        }
+    </script>
+</body>
+</html>
