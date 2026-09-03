@@ -277,6 +277,60 @@
             animation: shake 0.5s ease;
         }
 
+        /* Speech Speed */
+        .speed-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .speed-control label {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .speed-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 120px;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.35);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #764ba2;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        .speed-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        .speed-value {
+            font-size: 0.95rem;
+            font-weight: bold;
+            background: rgba(255,255,255,0.25);
+            padding: 4px 10px;
+            border-radius: 12px;
+            min-width: 36px;
+            text-align: center;
+        }
+
         /* Score and Progress */
         .score-display {
             text-align: center;
@@ -473,6 +527,30 @@
             .answer-box { font-size: 2rem; padding: 10px 20px; }
         }
 
+        /* Link to Colors App */
+        .link-row {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .link-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 10px 24px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .link-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
         /* Language Selector */
         .language-selector {
             display: flex;
@@ -517,6 +595,11 @@
         <h1>Number Adventure!</h1>
         <p class="subtitle">Learn numbers, addition and subtraction with fun!</p>
         
+        <!-- Link to Colors App -->
+        <div class="link-row">
+            <a class="link-btn" href="https://nanapaknanapak-huemirit.github.io/learn-colors-kids/" target="_blank" rel="noopener">🎨 Learn Colors!</a>
+        </div>
+
         <!-- Navigation Tabs -->
         <div class="nav-tabs">
             <button class="nav-tab active" onclick="switchTab('numbers')">Numbers</button>
@@ -535,6 +618,13 @@
             <button class="lang-btn" onclick="switchLanguage('it')"><span class="flag">🇮🇹</span>Italiano</button>
             <button class="lang-btn" onclick="switchLanguage('ja')"><span class="flag">🇯🇵</span>日本語</button>
             <button class="lang-btn" onclick="switchLanguage('zh')"><span class="flag">🇨🇳</span>中文</button>
+        </div>
+
+        <!-- Speech Speed -->
+        <div class="speed-control">
+            <label>Speech Speed:</label>
+            <input type="range" class="speed-slider" id="speedSlider" min="0.5" max="2" step="0.1" value="1" oninput="setSpeechSpeed(this.value)">
+            <span class="speed-value" id="speedValue">1.0x</span>
         </div>
 
         <!-- Score Display -->
@@ -882,6 +972,7 @@
 
         // ==================== AUDIO SYSTEM ====================
         const AUDIO_BASE_PATH = 'audio';
+        let speechRate = 1.0;
 
         /**
          * Plays a sequence of audio files one after another. All clips are
@@ -900,7 +991,9 @@
 
             // Preload every clip so playback is gap-free between words
             const clips = filenames.map((filename) => {
-                return new Audio(`${AUDIO_BASE_PATH}/${currentLang}/${filename}.mp3`);
+                const audio = new Audio(`${AUDIO_BASE_PATH}/${currentLang}/${filename}.mp3`);
+                audio.playbackRate = speechRate;
+                return audio;
             });
 
             for (const audio of clips) {
@@ -935,6 +1028,7 @@
             }
             
             const audio = new Audio(`${AUDIO_BASE_PATH}/${currentLang}/${filename}.mp3`);
+            audio.playbackRate = speechRate;
             currentAudio = audio;
             
             await new Promise((resolve) => {
@@ -944,6 +1038,13 @@
             });
             
             currentAudio = null;
+        }
+
+        // ==================== SPEECH SPEED ====================
+        function setSpeechSpeed(value) {
+            speechRate = parseFloat(value);
+            document.getElementById('speedValue').textContent = speechRate.toFixed(1) + 'x';
+            localStorage.setItem('learnNumbers_speed', speechRate);
         }
 
         /**
@@ -1067,6 +1168,14 @@
                     }
                 });
                 updateUIText();
+            }
+
+            // Load saved speech speed
+            const savedSpeed = localStorage.getItem('learnNumbers_speed');
+            if (savedSpeed) {
+                speechRate = parseFloat(savedSpeed);
+                document.getElementById('speedSlider').value = speechRate;
+                document.getElementById('speedValue').textContent = speechRate.toFixed(1) + 'x';
             }
             
             // Numbers cards
